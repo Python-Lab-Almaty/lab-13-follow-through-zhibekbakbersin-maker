@@ -290,8 +290,8 @@ def check_collision():
     global penalties
     for ox, oy, (w, h) in impassable_obstacles:
         if rect_collision(hero.xcor(), hero.ycor(), ox, oy, w, h, hero_radius=15):
-            penalties += 10
-            print(f"⚠️ ШТРАФ! (-10 баллов)")
+            penalties += 20
+            print(f"⚠️ ШТРАФ! (-20 баллов)")
             hero.goto(hero.xcor() - vx*3, hero.ycor() - vy*3)
             return "penalty"
     
