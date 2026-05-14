@@ -288,6 +288,21 @@ def draw_all():
     score_drawer.clear()
     score_drawer.write(f"Steps: {steps} | Penalties: {penalties} | Score: {score}",
                        align="center", font=("Arial", 16, "bold"))
+    
+    if hasattr(draw_all, 'timer_drawer'):
+        draw_all.timer_drawer.clear()
+    else:
+        draw_all.timer_drawer = turtle.Turtle()
+        draw_all.timer_drawer.hideturtle()
+        draw_all.timer_drawer.penup()
+    
+    timer_drawer = draw_all.timer_drawer
+    timer_drawer.goto(0, -HEIGHT//2 + 70)
+    elapsed_time = time.time() - start_time
+    timer_drawer.clear()
+    timer_drawer.write(f"Time: {elapsed_time:.2f}s",
+                       align="center", font=("Arial", 16, "bold"))
+    
     draw_lb()
     screen.update()
 
