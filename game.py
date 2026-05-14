@@ -125,7 +125,18 @@ def save_log(reason="end"):
 # 🟢 ИНИЦИАЛИЗАЦИЯ ИГРЫ
 # ----------------------------
 student_name = get_student_name()
+LB_FILE = "leaderboard.json"
 start, goal, impassable_obstacles = load_or_create_positions(student_name)
+def load_lb(): return json.load(open(LB_FILE, "r")) if os.path.exists(LB_FILE) else []
+def save_lb(recs):
+    with open(LB_FILE, "w", encoding="utf-8") as f: json.dump(sorted(recs, key=lambda x: -x["score"])[:3], f, indent=2, ensure_ascii=False)
+def add_lb(name, score, t, steps, pen):
+    recs = load_lb(); recs.append({"name":name, "score":score, "time":round(t,2), "steps":steps, "penalties":pen, "date":time.strftime("%Y-%m-%d %H:%M:%S")}); return save_lb(recs)
+def draw_lb():
+    if not hasattr(draw_lb, "d"): draw_lb.d = turtle.Turtle(); draw_lb.d.hideturtle(); draw_lb.d.penup()
+    draw_lb.d.clear(); draw_lb.d.goto(520, 380); draw_lb.d.write("🏆 ТОП-3", align="right", font=("Arial", 14, "bold"))
+    for i, r in enumerate(load_lb(), 1):
+        draw_lb.d.goto(520, 340 - i*45); draw_lb.d.write(f"{i}. {r['name']}: {r['score']} | ⏱{r['time']}с", align="right", font=("Arial", 10))
 
 # ----------------------------
 # 🟢 ЭКРАН
@@ -273,7 +284,7 @@ def draw_all():
     score_drawer.clear()
     score_drawer.write(f"Steps: {steps} | Penalties: {penalties} | Score: {score}",
                        align="center", font=("Arial", 16, "bold"))
-    
+    draw_lb()
     screen.update()
 
 def rect_collision(hero_x, hero_y, rect_x, rect_y, rect_w, rect_h, hero_radius=15):
@@ -433,6 +444,7 @@ while True:
     if not going_forward and abs(hero.xcor() - start[0]) < 40 and abs(hero.ycor() - start[1]) < 40:
         total_time = time.time() - start_time
         final_score = steps - penalties
+        add_lb(student_name, final_score, time.time() - start_time, steps, penalties)
         print(f"\n🏆 MISSION COMPLETE!")
         print(f"⏱️ Time: {total_time:.2f} seconds")
         print(f"👣 Steps: {steps}")
