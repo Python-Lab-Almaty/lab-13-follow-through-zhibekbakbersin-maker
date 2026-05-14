@@ -171,8 +171,12 @@ penalties = 0
 # ----------------------------
 # 🟢 СКОРОСТЬ
 # ----------------------------
+boost_active = False
 vx = 3
 vy = 3
+def toggle_boost():
+    global boost_active
+    boost_active = not boost_active
 
 # ----------------------------
 # 🟢 РЕЖИМ
@@ -316,57 +320,34 @@ def check_collision():
 # ----------------------------
 # 🟢 УПРАВЛЕНИЕ (БЕЗ ЧЕКПОИНТОВ!)
 # ----------------------------
+def get_current_speed():
+    return vx * (2 if boost_active else 1)
+
 def up():
     global steps
-    hero.sety(hero.ycor() + vy)
+    speed = get_current_speed()
+    hero.sety(hero.ycor() + speed)
     steps += 1
-    
-    log.append({
-        "event": "move",
-        "direction": "up",
-        "x": hero.xcor(),
-        "y": hero.ycor(),
-        "time": time.time()
-    })
-
+    log.append({"event": "move", "direction": "up", "x": hero.xcor(), "y": hero.ycor(), "time": time.time()})
 def down():
     global steps
-    hero.sety(hero.ycor() - vy)
+    speed = get_current_speed()
+    hero.sety(hero.ycor() - speed)
     steps += 1
-    
-    log.append({
-        "event": "move",
-        "direction": "down",
-        "x": hero.xcor(),
-        "y": hero.ycor(),
-        "time": time.time()
-    })
-
+    log.append({"event": "move", "direction": "down", "x": hero.xcor(), "y": hero.ycor(), "time": time.time()})
 def left():
     global steps
-    hero.setx(hero.xcor() - vx)
+    speed = get_current_speed()
+    hero.setx(hero.xcor() - speed)
     steps += 1
-    
-    log.append({
-        "event": "move",
-        "direction": "left",
-        "x": hero.xcor(),
-        "y": hero.ycor(),
-        "time": time.time()
-    })
+    log.append({"event": "move", "direction": "left", "x": hero.xcor(), "y": hero.ycor(), "time": time.time()})
 
 def right():
     global steps
-    hero.setx(hero.xcor() + vx)
+    speed = get_current_speed()
+    hero.setx(hero.xcor() + speed)
     steps += 1
-    
-    log.append({
-        "event": "move",
-        "direction": "right",
-        "x": hero.xcor(),
-        "y": hero.ycor(),
-        "time": time.time()
-    })
+    log.append({"event": "move", "direction": "right", "x": hero.xcor(), "y": hero.ycor(), "time": time.time()})
 
 def reset_session():
     clear_session(student_name)
@@ -382,7 +363,8 @@ screen.onkey(down, "s")
 screen.onkey(left, "a")
 screen.onkey(right, "d")
 screen.onkey(reset_session, "r")
-
+screen.onkey(toggle_boost, "Shift_L")
+screen.onkey(toggle_boost, "Shift_R")
 # ----------------------------
 # 🟢 ОСНОВНОЙ ЦИКЛ
 # ----------------------------
